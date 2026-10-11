@@ -1,0 +1,4 @@
+﻿import {forbidden} from './utils.js';
+// Exclusions apply to generated prose and scene elements; the original idea stays in settings.
+export function cleanText(text,settings){let out=String(text??'');for(const term of forbidden(settings).sort((a,b)=>b.length-a.length)){const escaped=term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');out=out.replace(new RegExp(escaped,'gi'),'gentle wonder');}return out;}
+export function cleanBook(book){const s=book.settings;for(const k of ['title','subtitle','description'])book[k]=cleanText(book[k],s);for(const p of book.pages){p.title=cleanText(p.title,s);p.text=cleanText(p.text,s);if(p.activity){const a=p.activity;a.instruction=cleanText(a.instruction,s);if(a.prompts)a.prompts=a.prompts.map(t=>cleanText(t,s));if(a.kind==='drawing'){a.settings={excluded:s.excluded,noMonsters:s.noMonsters,noWitches:s.noWitches,noScary:s.noScary};a.scene=p.scene;a.seed=book.seed;}}}return book;}
